@@ -121,10 +121,14 @@ class DMP:
 	def getWeights(self):
 		return self.weights
 
-	def executeDMP(self, time, dt, des_tau, x0, g, x, xdot, zeta):
+	def executeDMP(self, time, dt, des_tau, x0, g, x, xdot, zeta, h = None):
 
 		# zeta is the sensory coupling term, e.g., obstacle avoidance or force feedback
 		# and needs to be created outside (see Ijspert et al 2013)
+
+		# h is the modulation at the velocity level( zeta was in acceleration level) (Gams et al 2013)
+		if h is None:
+			h = 0
 
 		# Integrate the canonical system
 		s  = np.exp(((-self.alpha/des_tau)*time))
@@ -139,12 +143,12 @@ class DMP:
 		fs = (fs_nom/sum_of_BFs)*s
 
 		# Scaled Velocity needed
-		v = des_tau * xdot
+		v = des_tau * xdot - h
 
 		# Main equations
 		v_dot = (1.0/des_tau) * (np.dot(self.K,g-x) -np.dot(self.D,v) - np.dot(self.K,(g-x0))*s + np.dot(self.K,fs) + zeta)
 		v     =  v + v_dot * dt
-		xdot  =  v/des_tau
+		xdot  =  (v + h)/des_tau
 		x     =  x + xdot * dt
 
 		return x, xdot

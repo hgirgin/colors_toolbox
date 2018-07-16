@@ -4,8 +4,6 @@
 import sys
 sys.path.insert(0, '/home/hakan/ros_ws/src/baxter_examples/scripts/ASM')
 
-import numpy as np
-import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
